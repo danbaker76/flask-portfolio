@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Project: {{ project.title if project else 'Real-time Crypto Pipeline' }} – Dan Baker{% endblock %}
+
+{% block content %}
+<div class="container">
+    <nav class="breadcrumbs">
+        <a href="{{ url_for('index') }}">Home</a> >
+        <a href="{{ url_for('projects') }}">Projects</a> >
+        <span>{{ project.title if project else 'Real-time Crypto Pipeline' }}</span>
+    </nav>
+
+    <h1>{{ project.title if project else 'Real-time Crypto Pipeline' }}</h1>
+    <div class="project-meta">
+        <span class="status">✅ Production ready</span>
+        <span class="date">2025</span>
+    </div>
+
+    <div class="project-description">
+        <h2>Problem</h2>
+        <p>Financial analysts needed sub‑second latency on crypto prices to detect arbitrage opportunities. Existing batch pipelines were too slow.</p>
+
+        <h2>Solution</h2>
+        <p>A streaming pipeline that consumes from Coinbase WebSocket, cleans with Spark Structured Streaming, and writes to Parquet on S3.</p>
+
+        <h2>Architecture</h2>
+        <pre class="mermaid">
+            graph LR
+                A[Coinbase WebSocket] --> B[Kafka]
+                B --> C[Spark Streaming]
+                C --> D[Raw S3 Bucket]
+                D --> E[Glue Catalog]
+                E --> F[Athena / Redshift]
+        </pre>
+
+        <h2>Code snippet – Spark processing (by Dan Baker)</h2>
+        <pre><code class="language-python">from pyspark.sql import SparkSession
+from pyspark.sql.functions import from_json, col
+
+spark = SparkSession.builder.appName("CryptoStream").getOrCreate()
+df = spark.readStream.format("kafka") \
+    .option("subscribe", "crypto") \
+    .load()
+# ... transformation logic
+</code></pre>
+
+        <h2>Outcome</h2>
+        <p>Latency reduced from 5 minutes to under 3 seconds. The dashboard now triggers alerts on price anomalies instantly.</p>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    mermaid.initialize({ startOnLoad: true, theme: 'dark' });
+</script>
+{% endblock %}

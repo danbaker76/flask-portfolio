@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}Dan Baker – Data Engineering Projects{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Projects by Dan Baker</h1>
+    <div class="project-list">
+        <div class="project-card">
+            <h3><a href="{{ url_for('project_detail', project_id=1) }}">Real-time Crypto Pipeline</a></h3>
+            <p>Ingested live Bitcoin data via WebSocket, processed with Kafka & Spark Streaming, stored in S3.</p>
+            <div class="tech-stack">Python, Kafka, Spark, AWS</div>
+        </div>
+        <div class="project-card">
+            <h3><a href="{{ url_for('project_detail', project_id=2) }}">Batch ETL: E‑commerce Sales</a></h3>
+            <p>Airflow DAG extracting from PostgreSQL, transforming with dbt, loading into Redshift.</p>
+            <div class="tech-stack">Airflow, dbt, Redshift, SQL</div>
+        </div>
+        <div class="project-card">
+            <h3><a href="{{ url_for('project_detail', project_id=3) }}">Data Lake on AWS</a></h3>
+            <p>Built a serverless data lake with Glue crawlers, Athena queries, and Terraform.</p>
+            <div class="tech-stack">AWS Glue, Athena, Terraform</div>
+        </div>
+    </div>
+</div>
+{% endblock %}

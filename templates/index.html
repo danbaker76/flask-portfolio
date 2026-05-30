@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}Dan Baker – Data Engineer Portfolio{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-content">
+        <h1>Hi, I'm <span class="highlight">Dan Baker</span></h1>
+        <div class="typing-container">
+            <span id="typed-text"></span><span class="cursor">|</span>
+        </div>
+        <p>I build robust, scalable data pipelines that turn raw data into actionable insights.</p>
+        <a href="{{ url_for('projects') }}" class="cta-button">View My Data Projects →</a>
+    </div>
+</section>
+
+<section class="skills">
+    <h2>Tech Toolbox <i class="fas fa-tools"></i></h2>
+    <div class="skills-grid">
+        <div class="skill-card" data-tooltip="Batch & stream processing">Python</div>
+        <div class="skill-card" data-tooltip="Complex queries & optimization">SQL</div>
+        <div class="skill-card" data-tooltip="Orchestration & scheduling">Apache Airflow</div>
+        <div class="skill-card" data-tooltip="Cloud data warehousing">AWS (S3, Redshift)</div>
+        <div class="skill-card" data-tooltip="Infrastructure as Code">Terraform</div>
+        <div class="skill-card" data-tooltip="Data frames & analysis">Pandas</div>
+        <div class="skill-card" data-tooltip="Stream processing">Spark</div>
+        <div class="skill-card" data-tooltip="Containerization">Docker</div>
+    </div>
+</section>
+
+<section id="contact" class="contact">
+    <h2>Let's Connect</h2>
+    <p>Interested in data engineering opportunities? Reach out via <a href="https://linkedin.com/in/dan-baker" target="_blank">LinkedIn</a> or check my code on <a href="https://github.com/danbaker" target="_blank">GitHub</a>.</p>
+</section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const phrases = ["Building reliable data pipelines...", "ETL is my superpower.", "From raw logs to insights.", "Dan Baker – Data engineer. Problem solver."];
+    let i = 0;
+    let j = 0;
+    let currentPhrase = [];
+    let isDeleting = false;
+    let isEnd = false;
+
+    function loop() {
+        isEnd = false;
+        const typedSpan = document.getElementById('typed-text');
+        if (typedSpan) {
+            if (i < phrases.length) {
+                if (!isDeleting && j <= phrases[i].length) {
+                    currentPhrase.push(phrases[i][j]);
+                    typedSpan.innerHTML = currentPhrase.join('');
+                    j++;
+                }
+                if (isDeleting && j <= phrases[i].length) {
+                    currentPhrase.pop();
+                    typedSpan.innerHTML = currentPhrase.join('');
+                    j--;
+                }
+                if (j == phrases[i].length) {
+                    isEnd = true;
+                    isDeleting = true;
+                }
+                if (isDeleting && j === 0) {
+                    currentPhrase = [];
+                    isDeleting = false;
+                    i++;
+                    if (i === phrases.length) {
+                        i = 0;
+                    }
+                }
+            }
+        }
+        const spedUp = isEnd ? 2000 : 50;
+        setTimeout(loop, spedUp);
+    }
+    loop();
+
+    document.querySelectorAll('.skill-card').forEach(card => {
+        card.setAttribute('data-tooltip', card.getAttribute('data-tooltip') || '');
+    });
+</script>
+{% endblock %}

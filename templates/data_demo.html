@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Live Data Demo – Dan Baker's Sales Dashboard{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1>Interactive Sales Demo</h1>
+    <p>Filter by region or product to see how data reacts instantly. Built by Dan Baker.</p>
+
+    <div class="filters">
+        <input type="text" id="filter-product" placeholder="Filter by product...">
+        <select id="filter-region">
+            <option value="">All regions</option>
+            <option value="North">North</option>
+            <option value="South">South</option>
+            <option value="East">East</option>
+            <option value="West">West</option>
+        </select>
+    </div>
+
+    <table id="sales-table" border="1">
+        <thead>
+            <tr><th>Product</th><th>Sales ($)</th><th>Region</th></tr>
+        </thead>
+        <tbody>
+            {% for row in sales_data %}
+            <tr data-product="{{ row.product }}" data-region="{{ row.region }}">
+                <td>{{ row.product }}</td>
+                <td>{{ row.sales }}</td>
+                <td>{{ row.region }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const filterProduct = document.getElementById('filter-product');
+    const filterRegion = document.getElementById('filter-region');
+    const tableRows = document.querySelectorAll('#sales-table tbody tr');
+
+    function filterTable() {
+        const productVal = filterProduct.value.toLowerCase();
+        const regionVal = filterRegion.value;
+        tableRows.forEach(row => {
+            const product = row.getAttribute('data-product').toLowerCase();
+            const region = row.getAttribute('data-region');
+            const matchProduct = product.includes(productVal);
+            const matchRegion = regionVal === '' || region === regionVal;
+            row.style.display = (matchProduct && matchRegion) ? '' : 'none';
+        });
+    }
+    filterProduct.addEventListener('keyup', filterTable);
+    filterRegion.addEventListener('change', filterTable);
+</script>
+{% endblock %}
