@@ -63,3 +63,54 @@ styleSheet.textContent = `
     }
 `;
 document.head.appendChild(styleSheet);
+
+// Mouse-follow glow effect
+const glow = document.createElement('div');
+glow.className = 'mouse-glow';
+document.body.appendChild(glow);
+
+document.addEventListener('mousemove', (e) => {
+    glow.style.left = e.clientX + 'px';
+    glow.style.top = e.clientY + 'px';
+});
+
+// Scroll reveal + counter animation (dynamic stats)
+const revealElements = document.querySelectorAll('.project-card, .skill-card, .hero-content');
+revealElements.forEach(el => el.classList.add('reveal'));
+
+const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            entry.target.classList.add('active');
+            observer.unobserve(entry.target);
+        }
+    });
+}, { threshold: 0.2 });
+
+revealElements.forEach(el => observer.observe(el));
+
+// Optional: Live data counter – if you add a stats section
+// This will count up numbers when they appear
+const counters = document.querySelectorAll('.stat-number');
+const countObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+        if (entry.isIntersecting) {
+            const target = entry.target;
+            const end = parseInt(target.innerText);
+            let current = 0;
+            const increment = end / 50;
+            const timer = setInterval(() => {
+                current += increment;
+                if (current >= end) {
+                    target.innerText = end;
+                    clearInterval(timer);
+                } else {
+                    target.innerText = Math.floor(current);
+                }
+            }, 20);
+            countObserver.unobserve(target);
+        }
+    });
+}, { threshold: 0.5 });
+
+counters.forEach(c => countObserver.observe(c));
