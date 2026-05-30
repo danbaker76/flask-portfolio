@@ -114,3 +114,44 @@ const countObserver = new IntersectionObserver((entries) => {
 }, { threshold: 0.5 });
 
 counters.forEach(c => countObserver.observe(c));
+
+const terminalLines = [
+    "Initializing data pipeline...",
+    "Connecting to source API:  ✓",
+    "Extracting 15,432 records...",
+    "Validating schema:  ✓",
+    "Transforming: sales_amount > 0 filter applied",
+    "Loading into warehouse: 100%",
+    "Pipeline completed in 2.3 seconds.",
+    "Ready for next run."
+];
+
+let lineIndex = 0;
+const terminalLineSpan = document.getElementById('terminal-line');
+
+function typeNextLine() {
+    if (lineIndex < terminalLines.length) {
+        let charIndex = 0;
+        const currentLine = terminalLines[lineIndex];
+        terminalLineSpan.innerHTML = '';
+        const typeChar = setInterval(() => {
+            if (charIndex < currentLine.length) {
+                terminalLineSpan.innerHTML += currentLine[charIndex];
+                charIndex++;
+            } else {
+                clearInterval(typeChar);
+                lineIndex++;
+                // after finishing line, wait a bit then start next
+                setTimeout(() => {
+                    terminalLineSpan.innerHTML = '';
+                    if (lineIndex < terminalLines.length) {
+                        typeNextLine();
+                    } else {
+                        terminalLineSpan.innerHTML = "All systems operational.";
+                    }
+                }, 800);
+            }
+        }, 50);
+    }
+}
+typeNextLine();

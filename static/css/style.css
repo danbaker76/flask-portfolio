@@ -428,3 +428,50 @@ footer {
         display: block;
     }
 }
+
+.terminal-window {
+    background: #0a0f0c;
+    border-radius: 12px;
+    border: 1px solid var(--lime-dark);
+    box-shadow: 0 0 20px rgba(181,255,75,0.2);
+    max-width: 700px;
+    margin: 3rem auto;
+    overflow: hidden;
+    font-family: 'Fira Code', 'Courier New', monospace;
+}
+.terminal-header {
+    background: #1e2a1e;
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    border-bottom: 1px solid var(--lime-dark);
+}
+.dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+}
+.dot.red { background: #ff5f56; }
+.dot.yellow { background: #ffbd2e; }
+.dot.green { background: #27c93f; }
+.terminal-title {
+    margin-left: auto;
+    color: var(--text-muted);
+    font-size: 0.8rem;
+}
+.terminal-body {
+    padding: 20px;
+    color: #c3ff8c;
+    font-size: 0.9rem;
+    min-height: 200px;
+}
+.prompt {
+    color: var(--lime-bright);
+}
+.cursor-block {
+    background-color: var(--lime-bright);
+    color: black;
+    animation: blink 1s step-end infinite;
+}
