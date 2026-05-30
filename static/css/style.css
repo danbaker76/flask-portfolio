@@ -475,3 +475,38 @@ footer {
     color: black;
     animation: blink 1s step-end infinite;
 }
+
+/* Interactive terminal additions */
+.terminal-line {
+    margin-bottom: 8px;
+    white-space: pre-wrap;
+    word-break: break-word;
+}
+.cmd-highlight {
+    color: var(--lime-bright);
+    background: rgba(181,255,75,0.2);
+    padding: 0 4px;
+    border-radius: 4px;
+    font-weight: bold;
+}
+#terminal-input {
+    position: absolute;
+    left: -9999px;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+}
+.terminal-body {
+    cursor: text;
+}
+.terminal-body .prompt {
+    color: var(--lime-bright);
+    margin-right: 6px;
+}
+#current-input {
+    color: white;
+    background: transparent;
+    border: none;
+    outline: none;
+    font-family: inherit;
+}

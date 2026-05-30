@@ -114,44 +114,179 @@ const countObserver = new IntersectionObserver((entries) => {
 }, { threshold: 0.5 });
 
 counters.forEach(c => countObserver.observe(c));
+document.addEventListener('DOMContentLoaded', () => {
+    // --- Terminal interaction ---
+    const terminalBody = document.getElementById('terminal-body');
+    const terminalInput = document.getElementById('terminal-input');
+    const currentInputSpan = document.getElementById('current-input');
+    let commandHistory = [];
+    let historyIndex = -1;
+    let currentCommand = '';
 
-const terminalLines = [
-    "Initializing data pipeline...",
-    "Connecting to source API:  ✓",
-    "Extracting 15,432 records...",
-    "Validating schema:  ✓",
-    "Transforming: sales_amount > 0 filter applied",
-    "Loading into warehouse: 100%",
-    "Pipeline completed in 2.3 seconds.",
-    "Ready for next run."
-];
+    // Focus the hidden input when clicking terminal body
+    terminalBody.addEventListener('click', () => {
+        terminalInput.focus();
+    });
 
-let lineIndex = 0;
-const terminalLineSpan = document.getElementById('terminal-line');
-
-function typeNextLine() {
-    if (lineIndex < terminalLines.length) {
-        let charIndex = 0;
-        const currentLine = terminalLines[lineIndex];
-        terminalLineSpan.innerHTML = '';
-        const typeChar = setInterval(() => {
-            if (charIndex < currentLine.length) {
-                terminalLineSpan.innerHTML += currentLine[charIndex];
-                charIndex++;
-            } else {
-                clearInterval(typeChar);
-                lineIndex++;
-                // after finishing line, wait a bit then start next
-                setTimeout(() => {
-                    terminalLineSpan.innerHTML = '';
-                    if (lineIndex < terminalLines.length) {
-                        typeNextLine();
-                    } else {
-                        terminalLineSpan.innerHTML = "All systems operational.";
-                    }
-                }, 800);
+    // Command definitions
+    const commands = {
+        help: () => {
+            return `Available commands:
+- <span class="cmd-highlight">help</span> : show this help
+- <span class="cmd-highlight">projects</span> : list my main data projects
+- <span class="cmd-highlight">skills</span> : show my tech stack
+- <span class="cmd-highlight">contact</span> : how to reach me
+- <span class="cmd-highlight">clear</span> : clear the terminal
+- <span class="cmd-highlight">random</span> : get a random fact about me
+- <span class="cmd-highlight">pipeline [name]</span> : info about a specific pipeline (crypto, ecommerce, datalake)`;
+        },
+        projects: () => {
+            return `🔹 <strong>Real-time Crypto Pipeline</strong> – Kafka + Spark Streaming + S3<br>
+🔹 <strong>Batch ETL: E‑commerce Sales</strong> – Airflow + dbt + Redshift<br>
+🔹 <strong>Data Lake on AWS</strong> – Glue + Athena + Terraform<br>
+🔹 <strong>Interactive Sales Dashboard</strong> – Flask + Pandas + JS filters<br>
+🔹 <strong>Live Terminal Portfolio</strong> – you're using it right now!`;
+        },
+        skills: () => {
+            return `🐍 Python &nbsp;&nbsp;|&nbsp;&nbsp; 🛢️ SQL &nbsp;&nbsp;|&nbsp;&nbsp; ⚙️ Airflow &nbsp;&nbsp;|&nbsp;&nbsp; ☁️ AWS (S3, Redshift, Glue)<br>
+📦 Terraform &nbsp;&nbsp;|&nbsp;&nbsp; 🐼 Pandas &nbsp;&nbsp;|&nbsp;&nbsp; 🔥 Spark &nbsp;&nbsp;|&nbsp;&nbsp; 🐳 Docker<br>
+🖥️ Flask &nbsp;&nbsp;|&nbsp;&nbsp; 📊 dbt &nbsp;&nbsp;|&nbsp;&nbsp; 🧪 Great Expectations &nbsp;&nbsp;|&nbsp;&nbsp; 🧰 Git/GitHub`;
+        },
+        contact: () => {
+            return `📧 Email: dan@danielscottbaker.com<br>
+🔗 LinkedIn: <a href="https://linkedin.com/in/danbaker76" target="_blank">linkedin.com/in/danbaker76</a><br>
+🐙 GitHub: <a href="https://github.com/danbaker76" target="_blank">github.com/danbaker76</a><br>
+🌐 Website: <a href="https://danielscottbaker.com" target="_blank">danielscottbaker.com</a>`;
+        },
+        clear: () => {
+            // Clear all terminal lines except the prompt line
+            const lines = document.querySelectorAll('.terminal-line');
+            lines.forEach(line => line.remove());
+            // Re-add a fresh prompt line
+            const newPromptLine = document.createElement('div');
+            newPromptLine.className = 'terminal-line';
+            newPromptLine.innerHTML = '<span class="prompt">$</span> <span id="current-input"></span><span class="cursor-block">█</span>';
+            terminalBody.appendChild(newPromptLine);
+            // Reassign the currentInputSpan reference
+            window.currentInputSpan = document.getElementById('current-input');
+            return null; // return nothing to avoid extra line
+        },
+        random: () => {
+            const facts = [
+                "Dan once optimized a Spark job from 45 minutes to 3 minutes.",
+                "Favorite data tool: dbt – 'It's like git for analytics.'",
+                "Dan built his first data pipeline at age 22 for a local bakery.",
+                "He contributed to an open-source data validation library.",
+                "Dan's terminal portfolio is written in pure JS – no backend needed!"
+            ];
+            return facts[Math.floor(Math.random() * facts.length)];
+        },
+        pipeline: (args) => {
+            const name = args.trim().toLowerCase();
+            switch(name) {
+                case 'crypto':
+                    return "Real-time Crypto Pipeline: Uses Coinbase WebSocket → Kafka → Spark Streaming → S3. Latency < 3 seconds.";
+                case 'ecommerce':
+                    return "Batch ETL: Airflow DAG extracts from PostgreSQL, transforms with dbt, loads into Redshift. Runs daily.";
+                case 'datalake':
+                    return "Data Lake on AWS: Serverless lake with Glue crawlers, Athena queries, Terraform for IaC.";
+                default:
+                    return "Available pipelines: crypto, ecommerce, datalake. Example: `pipeline crypto`";
             }
-        }, 50);
+        }
+    };
+
+    // Random response for unrecognized commands (to keep it playful)
+    const randomResponses = [
+        "Command not found. Try `help`.",
+        "Hmm, I don't know that one. `help` shows available commands.",
+        "Not a valid command. Want to see what I can do? Type `help`.",
+        "🤖 Beep boop – unknown command. `help` will guide you.",
+        "Dan hasn't programmed that yet. Try `help` for ideas."
+    ];
+
+    function addTerminalLine(htmlContent) {
+        const lineDiv = document.createElement('div');
+        lineDiv.className = 'terminal-line';
+        lineDiv.innerHTML = htmlContent;
+        // Insert before the last line (which is the prompt line)
+        const promptLine = terminalBody.querySelector('.terminal-line:last-child');
+        terminalBody.insertBefore(lineDiv, promptLine);
+        terminalBody.scrollTop = terminalBody.scrollHeight;
     }
-}
-typeNextLine();
+
+    function setPromptContent(content) {
+        const promptSpan = document.getElementById('current-input');
+        if (promptSpan) promptSpan.innerText = content;
+    }
+
+    function executeCommand(cmd) {
+        const trimmed = cmd.trim();
+        if (trimmed === '') return;
+
+        // Add command to history
+        commandHistory.push(trimmed);
+        historyIndex = commandHistory.length;
+
+        // Show the command line in terminal
+        addTerminalLine(`<span class="prompt">$</span> ${trimmed}`);
+
+        // Parse command and arguments
+        const parts = trimmed.split(' ');
+        const mainCmd = parts[0].toLowerCase();
+        const args = parts.slice(1).join(' ');
+
+        let response = null;
+        if (commands[mainCmd]) {
+            response = commands[mainCmd](args);
+        } else {
+            // Random fallback
+            const randIdx = Math.floor(Math.random() * randomResponses.length);
+            response = randomResponses[randIdx];
+        }
+
+        if (response !== null) {
+            addTerminalLine(response);
+        }
+
+        // Clear current input line
+        setPromptContent('');
+    }
+
+    terminalInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+            const cmd = terminalInput.value;
+            executeCommand(cmd);
+            terminalInput.value = '';
+            currentCommand = '';
+            setPromptContent('');
+            e.preventDefault();
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            if (historyIndex > 0) {
+                historyIndex--;
+                terminalInput.value = commandHistory[historyIndex];
+                setPromptContent(commandHistory[historyIndex]);
+            }
+        } else if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            if (historyIndex < commandHistory.length - 1) {
+                historyIndex++;
+                terminalInput.value = commandHistory[historyIndex];
+                setPromptContent(commandHistory[historyIndex]);
+            } else {
+                historyIndex = commandHistory.length;
+                terminalInput.value = '';
+                setPromptContent('');
+            }
+        } else {
+            // Update the displayed current input as user types
+            setTimeout(() => {
+                setPromptContent(terminalInput.value);
+            }, 0);
+        }
+    });
+
+    // Focus on page load
+    terminalInput.focus();
+});
