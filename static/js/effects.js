@@ -198,11 +198,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Random response for unrecognized commands (to keep it playful)
     const randomResponses = [
-        "Command not found. Try `help`.",
-        "Hmm, I don't know that one. `help` shows available commands.",
-        "Not a valid command. Want to see what I can do? Type `help`.",
-        "🤖 Beep boop – unknown command. `help` will guide you.",
-        "Dan hasn't programmed that yet. Try `help` for ideas."
+        "Not sure, but you can try `help` for something else.",
+        "Bippity boppity give me the zoppity.",
+        "Not sure I follow, but do you.",
+        "Go Birds!",
+        "I guess we'll never know."
     ];
 
     function addTerminalLine(htmlContent) {
@@ -223,6 +223,14 @@ document.addEventListener('DOMContentLoaded', () => {
     function executeCommand(cmd) {
         const trimmed = cmd.trim();
         if (trimmed === '') return;
+        // Easter egg: Go Birds
+            if (trimmed.toLowerCase() === 'go birds') {
+            addTerminalLine(`<span class="prompt">$</span> ${trimmed}`);
+            addTerminalLine("GO BIRDS DICKHEAD!!");
+            setPromptContent('');
+            return;
+            }
+
 
         // Add command to history
         commandHistory.push(trimmed);
