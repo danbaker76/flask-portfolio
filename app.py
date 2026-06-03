@@ -25,6 +25,10 @@ def project_detail(project_id):
     # For now, return a simple template
     return render_template('project_detail.html', project_id=project_id)
 
+@app.route('/ufc-predictor')
+def ufc_predictor():
+    return render_template('ufc_predictor.html')
+
 # This should be at the very bottom of your app.py file
 if __name__ == '__main__':
     import os

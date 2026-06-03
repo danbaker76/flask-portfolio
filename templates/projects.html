@@ -7,6 +7,11 @@
     <h1>Projects by Dan Baker</h1>
     <div class="project-list">
         <div class="project-card">
+            <h3><a href="{{ url_for('static', filename='ufc-predictor.html') }}">UFC Fight Predictor (ML)</a></h3>
+            <p>Machine learning model (Random Forest) trained on historical UFC stats. Predicts fight winners via a Flask API deployed on Render.</p>
+            <div class="tech-stack">Python, scikit‑learn, Flask, Render</div>
+        </div>
+        <div class="project-card">
             <h3><a href="{{ url_for('project_detail', project_id=1) }}">Real-time Crypto Pipeline</a></h3>
             <p>Ingested live Bitcoin data via WebSocket, processed with Kafka & Spark Streaming, stored in S3.</p>
             <div class="tech-stack">Python, Kafka, Spark, AWS</div>
