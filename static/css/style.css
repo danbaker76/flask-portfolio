@@ -510,3 +510,10 @@ footer {
     outline: none;
     font-family: inherit;
 }
+footer a {
+    color: #e67e22;   /* warm orange */
+}
+footer a:hover {
+    color: #d35400;
+    text-decoration: underline;
+}
