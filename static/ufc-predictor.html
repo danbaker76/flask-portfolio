@@ -7,7 +7,7 @@
   <style>
     body {
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      max-width: 600px;
+      max-width: 800px;
       margin: 2rem auto;
       padding: 1rem;
       background: #f5f5f5;
@@ -52,13 +52,24 @@
       margin-bottom: 1rem;
     }
     .back-link a { color: #d32f2f; text-decoration: none; }
+    .pipeline {
+      margin-top: 2rem;
+      background: white;
+      padding: 2rem;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .pipeline h2 { margin-top: 0; }
+    .mermaid {
+      text-align: center;
+    }
   </style>
 </head>
 <body>
   <div class="back-link"><a href="/">&larr; Back to Projects</a></div>
   <div class="card">
     <h1>UFC Fight Predictor</h1>
-    <p>Enter two fighter names exactly as they appear in the UFC Stats database (e.g., "Jon Jones" vs "Stipe Miocic"). The machine learning model (Random Forest) estimates the win probability for the red corner.</p>
+    <p>Enter two fighter names exactly as they appear in the UFC Stats database (e.g., "Jon Jones" vs "Stipe Miocic"). The machine learning model (XGBoost) estimates the win probability for the red corner.</p>
     
     <label for="fighterA">Fighter A (Red corner)</label>
     <input type="text" id="fighterA" placeholder="e.g. Jon Jones">
@@ -70,6 +81,39 @@
     <div id="loading">⏳ Waking up the server (cold start)… this may take up to 40 seconds.</div>
     <div id="result"></div>
   </div>
+
+  <!-- Pipeline Diagram -->
+  <div class="pipeline">
+    <h2>How the Model Works</h2>
+    <p>This diagram shows the end‑to‑end machine learning pipeline behind every prediction.</p>
+    <div class="mermaid">
+        flowchart LR
+            A[📦 Kaggle Dataset] --> B[🧹 Preprocessing<br/>Clean heights, weights, percentages]
+            B --> C[📊 Feature Engineering<br/>40 features: static + historical averages]
+            C --> D[⚙️ Model Training<br/>XGBoost · Time‑Series CV<br/>Best Log Loss: 0.638]
+            D --> E[🚀 Deploy API<br/>Flask on Render · CORS enabled]
+            E --> F[🌐 Live Prediction<br/>danielscottbaker.com/ufc-predictor]
+            F --> G[📈 Probability Output]
+            
+            style A fill:#e1f5e1,stroke:#4caf50
+            style B fill:#fff3e0,stroke:#ff9800
+            style C fill:#fff3e0,stroke:#ff9800
+            style D fill:#e3f2fd,stroke:#2196f3
+            style E fill:#e3f2fd,stroke:#2196f3
+            style F fill:#f3e5f5,stroke:#9c27b0
+            style G fill:#f3e5f5,stroke:#9c27b0
+    </div>
+    <p style="margin-top:1.5rem; font-size:0.95rem; color:#555;">
+        <strong>Model Performance:</strong> Trained on 6,015 UFC fights. 5‑fold time‑series cross‑validation achieved log loss <strong>0.638</strong> 
+        (lower is better; baseline ~0.69). The model uses a fighter’s physical attributes and rolling career averages 
+        to predict the red corner’s win probability.
+    </p>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+  <script>
+    mermaid.initialize({ startOnLoad: true, theme: 'default' });
+  </script>
 
   <script>
     async function predict() {
